@@ -68,21 +68,21 @@ async function request<T>(
 // Auth API
 export const authApi = {
 	async register(name: string, email: string, password: string) {
-		return request<{ token: string; user: any }>('/auth/register', {
+		return request<{ token: string; user: any }>('/api/auth/register', {
 			method: 'POST',
 			body: JSON.stringify({ name, email, password })
 		});
 	},
 
 	async login(email: string, password: string) {
-		return request<{ token: string; user: any }>('/auth/login', {
+		return request<{ token: string; user: any }>('/api/auth/login', {
 			method: 'POST',
 			body: JSON.stringify({ email, password })
 		});
 	},
 
 	async me() {
-		return request<any>('/auth/me', {
+		return request<any>('/api/auth/me', {
 			requiresAuth: true
 		});
 	}
@@ -91,7 +91,7 @@ export const authApi = {
 // Subscription API
 export const subscriptionApi = {
 	async createCheckoutSession(interval: string) {
-		return request<{ session_id: string; url: string }>('/subscriptions/checkout', {
+		return request<{ session_id: string; url: string }>('/api/subscriptions/checkout', {
 			method: 'POST',
 			body: JSON.stringify({ interval }),
 			requiresAuth: true

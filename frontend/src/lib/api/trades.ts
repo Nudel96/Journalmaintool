@@ -77,7 +77,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
 export const tradesApi = {
 	async create(data: CreateTradeData): Promise<Trade> {
-		return request<Trade>('/trades', {
+		return request<Trade>('/api/trades', {
 			method: 'POST',
 			body: JSON.stringify(data)
 		});
@@ -92,24 +92,24 @@ export const tradesApi = {
 				}
 			});
 		}
-		
+
 		const query = params.toString();
-		return request<Trade[]>(`/trades${query ? `?${query}` : ''}`);
+		return request<Trade[]>(`/api/trades${query ? `?${query}` : ''}`);
 	},
 
 	async get(id: string): Promise<Trade> {
-		return request<Trade>(`/trades/${id}`);
+		return request<Trade>(`/api/trades/${id}`);
 	},
 
 	async update(id: string, data: Partial<CreateTradeData>): Promise<Trade> {
-		return request<Trade>(`/trades/${id}`, {
+		return request<Trade>(`/api/trades/${id}`, {
 			method: 'PUT',
 			body: JSON.stringify(data)
 		});
 	},
 
 	async delete(id: string): Promise<void> {
-		await fetch(`${API_URL}/trades/${id}`, {
+		await fetch(`${API_URL}/api/trades/${id}`, {
 			method: 'DELETE',
 			headers: {
 				'Authorization': `Bearer ${authStore.getToken()}`
@@ -120,21 +120,34 @@ export const tradesApi = {
 
 export const analyticsApi = {
 	async getOverview() {
-		return request('/analytics/overview');
+		return request('/api/analytics/overview');
 	},
 
 	async getBySymbol() {
-		return request('/analytics/symbols');
+		return request('/api/analytics/symbols');
 	},
 
 	async getBySetup() {
-		return request('/analytics/setups');
+		return request('/api/analytics/setups');
 	},
 
 	async getMistakes() {
-		return request('/analytics/mistakes');
+		return request('/api/analytics/mistakes');
 	}
 };
+
+// Helper functions for backward compatibility
+export async function getTrades(filters?: TradeFilters): Promise<Trade[]> {
+	return tradesApi.list(filters);
+}
+
+export async function createTrade(data: CreateTradeData): Promise<Trade> {
+	return tradesApi.create(data);
+}
+
+export async function deleteTrade(id: string): Promise<void> {
+	return tradesApi.delete(id);
+}
 
 export type { Trade, CreateTradeData, TradeFilters };
 

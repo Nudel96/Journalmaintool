@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 
 export interface User {
@@ -77,4 +77,9 @@ function createAuthStore() {
 }
 
 export const authStore = createAuthStore();
+
+// Derived stores for convenience
+export const isAuthenticated = derived(authStore, $auth => $auth.isAuthenticated);
+export const currentUser = derived(authStore, $auth => $auth.user);
+export const isLoading = derived(authStore, $auth => $auth.isLoading);
 
