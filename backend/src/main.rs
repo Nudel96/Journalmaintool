@@ -1,16 +1,21 @@
 use axum::{
-    routing::get,
+    middleware,
+    routing::{get, post},
     Router,
 };
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+use trading_journal_backend::{
+    db::{create_pool, run_migrations},
+    handlers,
+    middleware::auth_middleware,
+    AppState, Config,
+};
+
 #[tokio::main]
 async fn main() {
-    // Load environment variables
-    dotenv::dotenv().ok();
-
     // Initialize tracing
     tracing_subscriber::registry()
         .with(
@@ -20,19 +25,52 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    // Load configuration
+    let config = Config::from_env().expect("Failed to load configuration");
+    config.validate().expect("Invalid configuration");
+
+    // Create database connection pool
+    let db = create_pool(&config.database_url)
+        .await
+        .expect("Failed to connect to database");
+
+    // Run migrations
+    run_migrations(&db)
+        .await
+        .expect("Failed to run migrations");
+
+    // Create application state
+    let state = AppState {
+        db: db.clone(),
+        config: config.clone(),
+    };
+
     // CORS configuration
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(Any)
         .allow_headers(Any);
 
+    // Public routes (no authentication required)
+    let public_routes = Router::new()
+        .route("/auth/register", post(handlers::register))
+        .route("/auth/login", post(handlers::login));
+
+    // Protected routes (authentication required)
+    let protected_routes = Router::new()
+        .route("/auth/me", get(handlers::me))
+        .layer(middleware::from_fn_with_state(state.clone(), auth_middleware));
+
     // Build application router
     let app = Router::new()
         .route("/health", get(health_check))
-        .layer(cors);
+        .merge(public_routes)
+        .merge(protected_routes)
+        .layer(cors)
+        .with_state(state);
 
     // Start server
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([127, 0, 0, 1], config.server_port));
     tracing::info!("🚀 Server starting on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
