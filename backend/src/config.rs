@@ -8,6 +8,8 @@ pub struct Config {
     pub jwt_expiration_hours: i64,
     pub server_host: String,
     pub server_port: u16,
+    pub stripe_secret_key: String,
+    pub stripe_webhook_secret: String,
 }
 
 impl Config {
@@ -34,12 +36,20 @@ impl Config {
             .parse()
             .map_err(|_| "SERVER_PORT must be a valid number".to_string())?;
 
+        let stripe_secret_key = env::var("STRIPE_SECRET_KEY")
+            .map_err(|_| "STRIPE_SECRET_KEY must be set".to_string())?;
+
+        let stripe_webhook_secret = env::var("STRIPE_WEBHOOK_SECRET")
+            .map_err(|_| "STRIPE_WEBHOOK_SECRET must be set".to_string())?;
+
         Ok(Config {
             database_url,
             jwt_secret,
             jwt_expiration_hours,
             server_host,
             server_port,
+            stripe_secret_key,
+            stripe_webhook_secret,
         })
     }
 

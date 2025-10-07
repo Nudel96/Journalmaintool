@@ -88,5 +88,16 @@ export const authApi = {
 	}
 };
 
+// Subscription API
+export const subscriptionApi = {
+	async createCheckoutSession(interval: string) {
+		return request<{ session_id: string; url: string }>('/subscriptions/checkout', {
+			method: 'POST',
+			body: JSON.stringify({ interval }),
+			requiresAuth: true
+		});
+	}
+};
+
 export { ApiError };
 

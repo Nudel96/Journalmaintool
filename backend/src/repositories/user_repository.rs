@@ -88,6 +88,63 @@ impl UserRepository {
         Ok(())
     }
 
+    /// Update Stripe customer ID
+    pub async fn update_stripe_customer(&self, user_id: Uuid, customer_id: &str) -> Result<()> {
+        sqlx::query(
+            r#"
+            UPDATE users SET stripe_customer_id = $1 WHERE id = $2
+            "#,
+        )
+        .bind(customer_id)
+        .bind(user_id)
+        .execute(&self.pool)
+        .await?;
+
+        Ok(())
+    }
+
+    /// Update subscription status
+    pub async fn update_subscription(
+        &self,
+        customer_id: &str,
+        status: &str,
+        tier: &str,
+        interval: Option<&str>,
+    ) -> Result<()> {
+        sqlx::query(
+            r#"
+            UPDATE users
+            SET subscription_status = $1,
+                subscription_tier = $2,
+                subscription_interval = $3,
+                updated_at = NOW()
+            WHERE stripe_customer_id = $4
+            "#,
+        )
+        .bind(status)
+        .bind(tier)
+        .bind(interval)
+        .bind(customer_id)
+        .execute(&self.pool)
+        .await?;
+
+        Ok(())
+    }
+
+    /// Find user by Stripe customer ID
+    pub async fn find_by_stripe_customer(&self, customer_id: &str) -> Result<Option<User>> {
+        let user = sqlx::query_as::<_, User>(
+            r#"
+            SELECT * FROM users WHERE stripe_customer_id = $1
+            "#,
+        )
+        .bind(customer_id)
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(user)
+    }
+
     /// Verify password
     pub fn verify_password(&self, password: &str, password_hash: &str) -> Result<bool> {
         let parsed_hash = PasswordHash::new(password_hash)

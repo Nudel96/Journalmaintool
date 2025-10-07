@@ -59,13 +59,19 @@ async fn main() {
     // Protected routes (authentication required)
     let protected_routes = Router::new()
         .route("/auth/me", get(handlers::me))
+        .route("/subscriptions/checkout", post(handlers::create_checkout_session))
         .layer(middleware::from_fn_with_state(state.clone(), auth_middleware));
+
+    // Webhook routes (no authentication, verified by Stripe signature)
+    let webhook_routes = Router::new()
+        .route("/webhooks/stripe", post(handlers::handle_stripe_webhook));
 
     // Build application router
     let app = Router::new()
         .route("/health", get(health_check))
         .merge(public_routes)
         .merge(protected_routes)
+        .merge(webhook_routes)
         .layer(cors)
         .with_state(state);
 

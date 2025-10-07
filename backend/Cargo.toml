@@ -36,3 +36,6 @@ uuid = { version = "1", features = ["v4", "serde"] }
 rust_decimal = "1"
 thiserror = "1"
 dotenv = "0.15"
+
+# Stripe
+async-stripe = { version = "0.35", features = ["runtime-tokio-hyper", "webhook-events"] }
