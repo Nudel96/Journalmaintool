@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trading Dashboard (Canvas)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="trading_dashboard_theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
+    .dashboard-container { max-width: 1200px; margin: 2rem auto; padding: 2rem; }
+    .stats-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { flex: 1; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; display: flex; flex-direction: column; align-items: flex-start; }
+    .stat-label { font-size: 1rem; color: var(--muted-foreground); margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.5rem; font-weight: 600; }
+    .analysis-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
+    .analysis-card { flex: 1; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 2rem 1.5rem 1.5rem 1.5rem; display: flex; flex-direction: column; align-items: center; }
+    .analysis-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+    .analysis-details { display: flex; justify-content: space-between; width: 100%; margin-top: 1rem; font-size: 0.95rem; color: var(--muted-foreground); }
+    .charts-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
+    .chart-card { flex: 1; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; }
+    .chart-title { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+    @media (max-width: 900px) {
+      .stats-row, .analysis-row, .charts-row { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Stat Cards -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Number of days</div>
+        <div class="stat-value">3</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Trades Taken</div>
+        <div class="stat-value">36</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Biggest Win</div>
+        <div class="stat-value" style="color: var(--secondary);">$1,256.20</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Biggest Loss</div>
+        <div class="stat-value" style="color: var(--destructive);">-$696.60</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Lots Used</div>
+        <div class="stat-value">57.65</div>
+      </div>
+    </div>
+    <!-- Analysis Cards (Doughnut Charts) -->
+    <div class="analysis-row">
+      <div class="analysis-card">
+        <div class="analysis-title">Short Analysis</div>
+        <canvas id="shortAnalysisChart" width="180" height="90"></canvas>
+        <div class="analysis-details">
+          <div>Wins (5)<br><span style="color:var(--secondary)">$4,301.84</span></div>
+          <div>Win Rate<br>31.25%</div>
+          <div>Losses (11)<br><span style="color:var(--destructive)">$6,640.30</span></div>
+        </div>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-title">Profitability</div>
+        <canvas id="profitabilityChart" width="180" height="90"></canvas>
+        <div class="analysis-details">
+          <div>25%<br>Wins: 9</div>
+          <div>Total Trades<br>36</div>
+          <div>75%<br>Losses: 27</div>
+        </div>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-title">Long Analysis</div>
+        <canvas id="longAnalysisChart" width="180" height="90"></canvas>
+        <div class="analysis-details">
+          <div>Wins (4)<br><span style="color:var(--secondary)">$4,301.84</span></div>
+          <div>Win Rate<br>20%</div>
+          <div>Losses (16)<br><span style="color:var(--destructive)">$6,640.30</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Charts Row -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">PnL Distribution by Duration</div>
+        <canvas id="pnlBoxplotChart" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">PnL by Trade Duration</div>
+        <canvas id="pnlScatterChart" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Short Analysis (Doughnut)
+    new Chart(document.getElementById('shortAnalysisChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Losses', 'Wins'],
+        datasets: [{
+          data: [6640.30, 4301.84],
+          backgroundColor: ['#ff4d4f', '#7cfc00'],
+          borderWidth: 0,
+          cutout: '70%',
+          circumference: 180,
+          rotation: 270,
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+        },
+        cutout: '70%',
+        responsive: false,
+      }
+    });
+    // Profitability (Doughnut)
+    new Chart(document.getElementById('profitabilityChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Losses', 'Wins'],
+        datasets: [{
+          data: [27, 9],
+          backgroundColor: ['#ff4d4f', '#7cfc00'],
+          borderWidth: 0,
+          cutout: '70%',
+          circumference: 180,
+          rotation: 270,
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+        },
+        cutout: '70%',
+        responsive: false,
+      }
+    });
+    // Long Analysis (Doughnut)
+    new Chart(document.getElementById('longAnalysisChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Losses', 'Wins'],
+        datasets: [{
+          data: [6640.30, 4301.84],
+          backgroundColor: ['#ff4d4f', '#7cfc00'],
+          borderWidth: 0,
+          cutout: '70%',
+          circumference: 180,
+          rotation: 270,
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+        },
+        cutout: '70%',
+        responsive: false,
+      }
+    });
+    // Boxplot Chart (simuliert mit Bar)
+    new Chart(document.getElementById('pnlBoxplotChart'), {
+      type: 'bar',
+      data: {
+        labels: ['1m 6s', '2m 37s', '7m 27s', '23m 9s', '3h 54m'],
+        datasets: [
+          {
+            label: 'PnL',
+            data: [-200, -300, -100, 200, 900],
+            backgroundColor: [
+              '#ff4d4f', '#ff4d4f', '#ff4d4f', '#ff4d4f', '#7cfc00'
+            ],
+            borderRadius: 8,
+            barPercentage: 0.7,
+            categoryPercentage: 0.7,
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            grid: { color: '#23304a' },
+            ticks: { color: '#bfc9d1' }
+          },
+          x: {
+            grid: { color: '#23304a' },
+            ticks: { color: '#bfc9d1' }
+          }
+        },
+        responsive: true,
+      }
+    });
+    // Scatter Chart
+    new Chart(document.getElementById('pnlScatterChart'), {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'Win',
+            data: [
+              {x: 0.1, y: 200}, {x: 0.5, y: 400}, {x: 1, y: 800}, {x: 2, y: 1000}, {x: 6, y: 1200}
+            ],
+            backgroundColor: '#7cfc00',
+            pointRadius: 6,
+          },
+          {
+            label: 'Loss',
+            data: [
+              {x: 0.2, y: -200}, {x: 0.7, y: -400}, {x: 1.5, y: -600}, {x: 3, y: -800}, {x: 4, y: -1000}
+            ],
+            backgroundColor: '#ff4d4f',
+            pointRadius: 6,
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            min: 0,
+            max: 7,
+            grid: { color: '#23304a' },
+            ticks: { color: '#bfc9d1', callback: function(val) { return val + 'h'; } }
+          },
+          y: {
+            grid: { color: '#23304a' },
+            ticks: { color: '#bfc9d1' }
+          }
+        },
+        responsive: true,
+      }
+    });
+  </script>
+</body>
+</html>

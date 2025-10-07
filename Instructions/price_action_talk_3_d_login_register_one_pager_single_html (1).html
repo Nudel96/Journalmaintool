@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PriceActionTalk — Sign in / Create account</title>
+  <meta name="description" content="Dark 3D one‑pager: login & register for the PriceActionTalk trading journal tool." />
+  <meta name="theme-color" content="#0d1b2a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* Brand palette provided */
+      --bg: #0d1b2a;               /* deep navy */
+      --bg-2: #2e2e2e;             /* dark gray */
+      --brand: #1b9aaa;            /* turquoise */
+      --accent: #7cfc00;           /* lime green */
+      --success: #7cfc00;          /* success */
+      --danger: #ef4444;           /* error */
+      --text: #ffffff;             /* white text */
+      --muted: #cfd6dd;            /* light muted */
+      --ring: rgba(27, 154, 170, .45);
+      --glass: rgba(46, 46, 46, 0.55);
+      --glass-strong: rgba(46, 46, 46, 0.85);
+      --card-border: rgba(27, 154, 170, .22);
+      --shadow: 0 10px 40px rgba(0,0,0,.55);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+      color:var(--text);
+      background:radial-gradient(1200px 800px at 10% 10%, rgba(27,154,170,.2) 0%, #0d1b2a 60%), var(--bg);
+      overflow:hidden;
+    }
+    /* Canvas background slot */
+    #bg3d{position:fixed; inset:0; z-index:-2;}
+    .vignette{position:fixed; inset:-10px; pointer-events:none; z-index:-1; background:
+      radial-gradient(1200px 800px at 85% 20%, rgba(27,154,170,.20) 0%, rgba(27,154,170,0) 60%),
+      radial-gradient(900px 600px at 20% 80%, rgba(124,252,0,.18) 0%, rgba(124,252,0,0) 60%),
+      radial-gradient(1200px 900px at 50% 50%, rgba(0,0,0,.35) 40%, rgba(0,0,0,.65) 100%);
+      filter: saturate(1.2);
+    }
+
+    /* Layout */
+    .wrap{position:relative; min-height:100vh; display:grid; place-items:center; padding:clamp(16px, 3vw, 32px);}    
+    .card{width:min(980px, 94vw); backdrop-filter: blur(16px) saturate(120%);
+      background:linear-gradient(180deg, var(--glass) 0%, var(--glass-strong) 100%);
+      border:1px solid var(--card-border); border-radius:24px; box-shadow:var(--shadow); overflow:hidden;
+      display:grid; grid-template-columns: 1.1fr 1fr;}
+    @media (max-width: 980px){.card{grid-template-columns: 1fr;}}
+
+    /* Hero side */
+    .hero{position:relative; padding:40px 40px 24px; overflow:hidden;}
+    .logo{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.2px; text-transform:uppercase;}
+    .logo .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--brand), var(--accent)); box-shadow:0 0 24px var(--brand);}    
+    .hero h1{margin:18px 0 12px; font-size:clamp(28px, 3.4vw, 40px); line-height:1.1;}
+    .hero p{margin:0; color:var(--muted); font-size:clamp(14px, 1.4vw, 16px)}
+    .features{display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; margin-top:24px}
+    .chip{border:1px dashed rgba(124,252,0,.35); background:rgba(124,252,0,.10); padding:10px 12px; border-radius:12px; font-size:13px; color:#ebf4ff}
+    @media (max-width: 980px){.features{grid-template-columns:1fr 1fr}}
+
+    /* Auth side */
+    .auth{position:relative; padding:28px; background:linear-gradient(180deg, rgba(13,27,42,.35), rgba(13,27,42,.75)); border-left:1px solid rgba(255,255,255,.06)}
+    .tabs{display:flex; gap:8px; background:rgba(255,255,255,.06); padding:6px; border-radius:12px; border:1px solid rgba(255,255,255,.08)}
+    .tab{flex:1; text-align:center; cursor:pointer; padding:10px 12px; border-radius:10px; font-weight:700; color:#eaf5ff; transition:all .25s ease}
+    .tab.active{background:linear-gradient(180deg, rgba(27,154,170,.18), rgba(124,252,0,.14)); color:white; outline:1px solid rgba(27,154,170,.35);}
+
+    form{margin-top:18px; display:grid; gap:14px}
+    label{font-size:12px; color:#dce6ef; display:block; margin-bottom:6px}
+    .group{display:grid; gap:8px}
+    .field{display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:14px; padding:10px 12px; outline:0; transition:border-color .2s, box-shadow .2s}
+    .field:has(input:focus){box-shadow:0 0 0 4px var(--ring); border-color:rgba(27,154,170,.55)}
+    .field input{flex:1; background:transparent; border:0; outline:0; color:var(--text); font-size:15px; padding:6px 2px}
+    .hint{font-size:12px; color:#c6d3dd}
+    .err{font-size:12px; color:var(--danger); display:none}
+
+    .row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+    .checkbox{display:flex; align-items:center; gap:10px; font-size:13px; color:#e6f1f7}
+    .checkbox input{width:16px; height:16px; accent-color:var(--brand)}
+
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px 14px; cursor:pointer; font-weight:800; transition:transform .1s ease, box-shadow .25s ease, background .25s ease; text-decoration:none}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:linear-gradient(135deg, rgba(27,154,170,.22), rgba(124,252,0,.18)); color:white; box-shadow:0 10px 30px rgba(27,154,170,.2), inset 0 0 24px rgba(124,252,0,.25)}
+    .btn.primary:hover{box-shadow:0 14px 40px rgba(27,154,170,.28), inset 0 0 30px rgba(124,252,0,.35)}
+
+    .divider{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px; color:#b9c7d2; font-size:12px;}
+    .divider::before,.divider::after{content:""; height:1px; background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.22), rgba(255,255,255,0));}
+
+    .socials{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .btn.ghost{background:rgba(255,255,255,.06); color:#ecf5ff}
+
+    .strength{height:8px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden}
+    .bar{height:100%; width:0%; background:linear-gradient(90deg, #ef4444, #f59e0b, #7cfc00); transition:width .35s ease}
+
+    .legal{font-size:12px; color:#b9c7d2}
+    .links{display:flex; gap:16px}
+    .links a{color:#7cfc00; text-decoration:none}
+
+    footer{position:fixed; bottom:12px; left:0; right:0; text-align:center; color:#8ea0ad; font-size:12px}
+
+    /* Small decorative ticker */
+    .ticker{position:absolute; bottom:-1px; left:-1px; right:-1px; height:40px; background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.35)); border-top:1px solid rgba(255,255,255,.08); overflow:hidden}
+    .ticker .line{position:absolute; white-space:nowrap; bottom:8px; left:0; right:0; animation:ticker 30s linear infinite; opacity:.9}
+    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .badge{display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.08); padding:6px 10px; border-radius:999px; margin-right:12px; font-size:12px}
+    .badge .b{display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--brand); box-shadow:0 0 12px var(--brand)}
+  </style>
+</head>
+<body>
+  <canvas id="bg3d" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <section class="card" role="region" aria-label="PriceActionTalk authentication">
+      <!-- LEFT: Brand & Selling points -->
+      <div class="hero">
+        <div class="logo" aria-label="PriceActionTalk">
+          <span class="dot" aria-hidden="true"></span>
+          <span>PriceActionTalk</span>
+        </div>
+        <h1>Elevate your trading journal.</h1>
+        <p>One secure account for journaling, strategy building, and performance analytics. Join a community of disciplined market operators.</p>
+
+        <div class="features">
+          <div class="chip">✨ Integrated Trading Journal</div>
+          <div class="chip">⏲️ Session & risk tracking</div>
+          <div class="chip">📈 Strategy builder</div>
+          <div class="chip">👁️ Pattern tagging</div>
+          <div class="chip">⚡ Fast import from brokers</div>
+          <div class="chip">👥 Community insights</div>
+        </div>
+
+        <div class="ticker" aria-hidden="true">
+          <div class="line">
+            <span class="badge"><span class="b"></span>EURUSD +0.42%</span>
+            <span class="badge"><span class="b"></span>NAS100 +1.02%</span>
+            <span class="badge"><span class="b"></span>BTC +2.80%</span>
+            <span class="badge"><span class="b"></span>WTI -0.35%</span>
+            <span class="badge"><span class="b"></span>XAU +0.12%</span>
+            <span class="badge"><span class="b"></span>US10Y 3.95%</span>
+            &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;repeat…
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Auth -->
+      <div class="auth">
+        <div class="tabs" role="tablist" aria-label="Authentication tabs">
+          <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-login" id="tab-login">Sign in</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="panel-register" id="tab-register">Create account</button>
+        </div>
+
+        <!-- LOGIN -->
+        <form id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+          <div class="group">
+            <label for="lemail">Email</label>
+            <div class="field"><input id="lemail" name="email" type="email" placeholder="you@domain.com" autocomplete="email" required></div>
+            <div class="err" id="lemailErr">Please enter a valid email.</div>
+          </div>
+          <div class="group">
+            <label for="lpassword">Password</label>
+            <div class="field"><input id="lpassword" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required></div>
+            <div class="row">
+              <label class="checkbox"><input id="remember" type="checkbox" checked> Remember me</label>
+              <a href="#" class="hint">Forgot password?</a>
+            </div>
+          </div>
+          <button class="btn primary" type="submit">Sign in</button>
+          <div class="divider">or continue with</div>
+          <div class="socials">
+            <a class="btn ghost" href="#" aria-label="Continue with Google">● Google</a>
+            <a class="btn ghost" href="#" aria-label="Continue with GitHub">💻 GitHub</a>
+          </div>
+        </form>
+
+        <!-- REGISTER -->
+        <form id="panel-register" role="tabpanel" aria-labelledby="tab-register" hidden>
+          <div class="group">
+            <label for="rname">Full name</label>
+            <div class="field"><input id="rname" name="name" type="text" placeholder="First Last" autocomplete="name" required></div>
+          </div>
+          <div class="group">
+            <label for="remail">Email</label>
+            <div class="field"><input id="remail" name="email" type="email" placeholder="you@domain.com" autocomplete="email" required></div>
+            <div class="err" id="remailErr">Please enter a valid email.</div>
+          </div>
+          <div class="group">
+            <label for="rpassword">Password</label>
+            <div class="field"><input id="rpassword" name="password" type="password" placeholder="8+ characters" autocomplete="new-password" required></div>
+            <div class="strength" aria-hidden="true"><div id="bar" class="bar"></div></div>
+            <span class="hint" id="psHint">Use at least 8 characters, with a number and a symbol.</span>
+          </div>
+          <div class="row">
+            <label class="checkbox"><input id="terms" type="checkbox" required> I agree to the <a href="#" class="hint">Terms</a> & <a href="#" class="hint">Privacy</a></label>
+          </div>
+          <button class="btn primary" type="submit">Create account</button>
+          <div class="divider">or sign up with</div>
+          <div class="socials">
+            <a class="btn ghost" href="#" aria-label="Continue with Google">● Google</a>
+            <a class="btn ghost" href="#" aria-label="Continue with GitHub">💻 GitHub</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 PriceActionTalk — Trading Journal & Strategy Builder
+  </footer>
+
+  <!-- Three.js (for the 3D background) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+  <script>
+  // =========================
+  // 3D BACKGROUND (Particles + Reactive Vectors)
+  // =========================
+  (()=>{
+    const canvas = document.getElementById('bg3d');
+    const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 2000);
+    camera.position.set(0, 0, 42);
+
+    // Resize
+    function resize(){
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(innerWidth, innerHeight);
+      camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+    }
+    addEventListener('resize', resize); resize();
+
+    // Glow gradient background sphere
+    const glowGeo = new THREE.SphereGeometry(60, 64, 64);
+    const glowMat = new THREE.ShaderMaterial({
+      uniforms:{ uTime:{value:0}, uColorA:{value:new THREE.Color('#0d1b2a')}, uColorB:{value:new THREE.Color('#0d1b2a')}, uAccent:{value:new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent'))}},
+      vertexShader:`
+        varying vec3 vPos; void main(){ vPos = position; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }
+      `,
+      fragmentShader:`
+        varying vec3 vPos; uniform float uTime; uniform vec3 uColorA; uniform vec3 uColorB; uniform vec3 uAccent;
+        float noise(vec3 p){ return fract(sin(dot(p, vec3(12.9898,78.233, 37.719)))*43758.5453); }
+        void main(){
+          vec3 dir = normalize(vPos);
+          float n = noise(dir*4.0 + uTime*0.05);
+          float g = smoothstep(-0.3, 0.8, dir.z + n*0.25);
+          vec3 col = mix(uColorA, uColorB, g);
+          col += uAccent * 0.05 * (0.5 + n);
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `, side: THREE.BackSide
+    });
+    const glow = new THREE.Mesh(glowGeo, glowMat); scene.add(glow);
+
+    // Particle field (price-like motion)
+    const COUNT = 4500;
+    const g = new THREE.BufferGeometry();
+    const pos = new Float32Array(COUNT*3); const spd = new Float32Array(COUNT);
+    for(let i=0;i<COUNT;i++){
+      pos[i*3+0] = (Math.random()-0.5)*120;  // x
+      pos[i*3+1] = (Math.random()-0.5)*60;   // y
+      pos[i*3+2] = (Math.random()-0.5)*40;   // z
+      spd[i] = 0.5 + Math.random()*1.5;
+    }
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('aSpeed', new THREE.BufferAttribute(spd, 1));
+
+    const pMat = new THREE.ShaderMaterial({
+      transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
+      uniforms:{ uTime:{value:0}, uBrand:{ value:new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--brand')) } },
+      vertexShader:`
+        attribute float aSpeed; varying float vA; uniform float uTime;
+        void main(){
+          vec3 p = position; float t=uTime*0.08*aSpeed;
+          p.y += sin(p.x*0.08 + t)*0.8 + sin(p.z*0.05 + t*1.2)*0.6;
+          p.x += sin(p.y*0.05 + t*0.6)*0.4;
+          vA = 0.6 + 0.4*sin(t + position.x*0.02);
+          gl_PointSize = 1.8 + 1.6*vA; gl_Position = projectionMatrix*modelViewMatrix*vec4(p,1.0);
+        }`,
+      fragmentShader:`
+        varying float vA; uniform vec3 uBrand;
+        void main(){
+          float d = length(gl_PointCoord - vec2(0.5));
+          float alpha = smoothstep(0.55, 0.0, d) * vA;
+          gl_FragColor = vec4(uBrand, alpha);
+        }`
+    });
+    const points = new THREE.Points(g, pMat); scene.add(points);
+
+    // Wireframe waves plane
+    const planeGeo = new THREE.PlaneGeometry(160, 100, 120, 80);
+    const planeMat = new THREE.LineBasicMaterial({ color: new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent')), transparent:true, opacity:0.28 });
+    const wf = new THREE.LineSegments(new THREE.WireframeGeometry(planeGeo), planeMat);
+    wf.rotation.x = -Math.PI/3; wf.position.set(0,-20,-10); scene.add(wf);
+
+    // Mouse parallax
+    const target = new THREE.Vector2();
+    addEventListener('pointermove', (e)=>{
+      target.x = (e.clientX / innerWidth - 0.5) * 0.8;
+      target.y = (e.clientY / innerHeight - 0.5) * 0.6;
+    });
+
+    let t=0; function animate(){
+      requestAnimationFrame(animate); t+=1/60; glowMat.uniforms.uTime.value = t; pMat.uniforms.uTime.value = t;
+      camera.position.x += (target.x*24 - camera.position.x) * 0.03;
+      camera.position.y += (target.y*10 - camera.position.y) * 0.03;
+      camera.lookAt(0,0,0);
+      // animate wireframe Z displacement
+      const p = wf.geometry.attributes.position; for(let i=0;i<p.count;i+=1){
+        const x = p.getX(i), y = p.getY(i); const z = Math.sin((x*0.12 + t*0.6)) * Math.cos((y*0.18 + t*0.5)) * 1.2; p.setZ(i,z);
+      } p.needsUpdate = true;
+      renderer.render(scene, camera);
+    } animate();
+  })();
+
+  // =========================
+  // UI LOGIC
+  // =========================
+  const $ = (q, p=document)=>p.querySelector(q);
+  const $$ = (q, p=document)=>p.querySelectorAll(q);
+
+  const tabLogin = $('#tab-login');
+  const tabReg = $('#tab-register');
+  const panelLogin = $('#panel-login');
+  const panelReg = $('#panel-register');
+
+  function setTab(mode){
+    const login = mode==='login';
+    tabLogin.classList.toggle('active', login);
+    tabReg.classList.toggle('active', !login);
+    tabLogin.setAttribute('aria-selected', login);
+    tabReg.setAttribute('aria-selected', !login);
+    panelLogin.hidden = !login; panelReg.hidden = login;
+  }
+  tabLogin.addEventListener('click', ()=>setTab('login'));
+  tabReg.addEventListener('click', ()=>setTab('register'));
+
+  // Basic form validation demo
+  panelLogin.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const email = $('#lemail').value.trim();
+    const pass = $('#lpassword').value.trim();
+    const valid = /.+@.+\..+/.test(email) && pass.length>0;
+    $('#lemailErr').style.display = valid ? 'none' : 'block';
+    if(valid){
+      // Replace with real request
+      alert('Signed in! (Hook this to your API)');
+    }
+  });
+
+  panelReg.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const email = $('#remail').value.trim();
+    const pass = $('#rpassword').value.trim();
+    const ok = /.+@.+\..+/.test(email) && strength(pass) >= 3 && $('#terms').checked;
+    $('#remailErr').style.display = /.+@.+\..+/.test(email) ? 'none':'block';
+    if(ok){
+      alert('Account created! (Hook this to your API)');
+    }
+  });
+
+  // Password strength meter
+  const bar = $('#bar'); const psHint = $('#psHint');
+  $('#rpassword').addEventListener('input', (e)=>{
+    const s = strength(e.target.value);
+    bar.style.width = (s/4*100)+'%';
+    psHint.textContent = ['Too weak','Weak','Okay','Strong','Excellent'][s];
+  });
+
+  function strength(p){
+    let s = 0; if(p.length>=8) s++; if(/[A-Z]/.test(p)) s++; if(/[0-9]/.test(p)) s++; if(/[^\w]/.test(p)) s++; return s; // 0..4
+  }
+  </script>
+</body>
+</html>

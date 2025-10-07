@@ -1,0 +1,52 @@
+:root {
+  --background: #0d1b2a;
+  --foreground: #ffffff;
+  --card: #2e2e2e;
+  --card-foreground: #ffffff;
+  --primary: #1b9aaa;
+  --primary-foreground: #ffffff;
+  --secondary: #7cfc00;
+  --secondary-foreground: #0d1b2a;
+  --muted: #222b3a;
+  --muted-foreground: #bfc9d1;
+  --accent: #1b9aaa;
+  --accent-foreground: #ffffff;
+  --destructive: #ff4d4f;
+  --destructive-foreground: #ffffff;
+  --border: #23304a;
+  --input: #23304a;
+  --ring: #1b9aaa;
+  --chart-1: #1b9aaa;
+  --chart-2: #7cfc00;
+  --chart-3: #ff4d4f;
+  --chart-4: #ffffff;
+  --chart-5: #2e2e2e;
+  --font-sans: 'Inter', 'Roboto', Arial, sans-serif;
+  --font-serif: 'Merriweather', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --radius: 1rem;
+  --shadow-xs: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.1);
+  --shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
+  --shadow-md: 0 8px 32px 0 rgba(0,0,0,0.22);
+  --shadow-lg: 0 16px 48px 0 rgba(0,0,0,0.28);
+  --shadow-xl: 0 24px 64px 0 rgba(0,0,0,0.32);
+  --spacing: 1.5rem;
+}
+body {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  font-family: var(--font-sans) !important;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--foreground) !important;
+  font-family: var(--font-sans) !important;
+}
+.card {
+  background: var(--card) !important;
+  color: var(--card-foreground) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow) !important;
+  padding: 2rem !important;
+  margin-bottom: 1.5rem !important;
+}
