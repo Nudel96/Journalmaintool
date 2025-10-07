@@ -85,7 +85,7 @@ pub struct UpdateTradeRequest {
 }
 
 /// Trade list filters
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default)]
 pub struct TradeFilters {
     pub symbol: Option<String>,
     pub direction: Option<String>,

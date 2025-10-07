@@ -65,6 +65,10 @@ async fn main() {
         .route("/trades/:id", get(handlers::get_trade))
         .route("/trades/:id", put(handlers::update_trade))
         .route("/trades/:id", delete(handlers::delete_trade))
+        .route("/analytics/overview", get(handlers::get_overview))
+        .route("/analytics/symbols", get(handlers::get_by_symbol))
+        .route("/analytics/setups", get(handlers::get_by_setup))
+        .route("/analytics/mistakes", get(handlers::get_mistakes))
         .layer(middleware::from_fn_with_state(state.clone(), auth_middleware));
 
     // Webhook routes (no authentication, verified by Stripe signature)
