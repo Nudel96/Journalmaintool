@@ -4,7 +4,7 @@ use crate::{
 };
 use stripe::{
     CheckoutSession, CheckoutSessionMode, Client, CreateCheckoutSession,
-    CreateCheckoutSessionLineItems, CreateCustomer, Customer, EventObject, EventType,
+    CreateCheckoutSessionLineItems, CreateCustomer, Customer, CustomerId, EventObject, EventType,
     Webhook,
 };
 
@@ -45,7 +45,7 @@ impl StripeService {
 
         let mut params = CreateCheckoutSession::new();
         params.mode = Some(CheckoutSessionMode::Subscription);
-        params.customer = Some(customer_id.to_string());
+        params.customer = Some(customer_id.parse::<CustomerId>().unwrap());
         params.success_url = Some(success_url);
         params.cancel_url = Some(cancel_url);
 

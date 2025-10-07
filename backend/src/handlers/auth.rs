@@ -1,12 +1,12 @@
 use crate::{
     auth::generate_token,
     error::{AppError, Result},
+    middleware::AuthUser,
     models::{AuthResponse, CreateUserRequest, LoginRequest, UserResponse},
     repositories::UserRepository,
     AppState,
 };
 use axum::{extract::State, Json};
-use validator::Validate;
 
 /// Register a new user
 pub async fn register(
@@ -100,7 +100,7 @@ pub async fn login(
 /// Get current user (requires authentication)
 pub async fn me(
     State(state): State<AppState>,
-    user_id: uuid::Uuid, // This will be extracted by auth middleware
+    AuthUser(user_id): AuthUser,
 ) -> Result<Json<UserResponse>> {
     let user_repo = UserRepository::new(state.db.clone());
 

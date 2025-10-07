@@ -1,6 +1,6 @@
 use axum::{
     middleware,
-    routing::{get, post},
+    routing::{delete, get, post, put},
     Router,
 };
 use std::net::SocketAddr;

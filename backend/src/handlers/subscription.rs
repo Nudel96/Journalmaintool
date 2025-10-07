@@ -72,11 +72,12 @@ pub async fn handle_stripe_webhook(
     State(state): State<AppState>,
     request: Request,
 ) -> Result<StatusCode> {
-    // Get signature from header
+    // Get signature from header (clone to avoid borrow issues)
     let signature = request
         .headers()
         .get("stripe-signature")
         .and_then(|h| h.to_str().ok())
+        .map(|s| s.to_string())
         .ok_or(AppError::ValidationError("Missing stripe-signature header".to_string()))?;
 
     // Get body
@@ -94,7 +95,7 @@ pub async fn handle_stripe_webhook(
     );
 
     // Verify webhook
-    let event = stripe_service.verify_webhook(&payload, signature)?;
+    let event = stripe_service.verify_webhook(&payload, &signature)?;
 
     // Handle event
     let action = stripe_service.handle_webhook_event(event).await?;
