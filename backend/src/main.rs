@@ -60,6 +60,11 @@ async fn main() {
     let protected_routes = Router::new()
         .route("/auth/me", get(handlers::me))
         .route("/subscriptions/checkout", post(handlers::create_checkout_session))
+        .route("/trades", post(handlers::create_trade))
+        .route("/trades", get(handlers::list_trades))
+        .route("/trades/:id", get(handlers::get_trade))
+        .route("/trades/:id", put(handlers::update_trade))
+        .route("/trades/:id", delete(handlers::delete_trade))
         .layer(middleware::from_fn_with_state(state.clone(), auth_middleware));
 
     // Webhook routes (no authentication, verified by Stripe signature)
