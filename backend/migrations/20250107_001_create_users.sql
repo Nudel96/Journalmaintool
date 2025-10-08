@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS users (
     subscription_interval VARCHAR(20),
     
     permissions TEXT[] DEFAULT '{}',
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    last_login TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    last_login TIMESTAMPTZ
 );
 
 -- Create indexes

@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS trades (
     quantity DECIMAL(20, 8) NOT NULL,
     
     -- Timestamps
-    entry_time TIMESTAMP NOT NULL,
-    exit_time TIMESTAMP,
+    entry_time TIMESTAMPTZ NOT NULL,
+    exit_time TIMESTAMPTZ,
     
     -- P&L
     pnl DECIMAL(20, 8),
@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS trades (
     account_id VARCHAR(100),
     status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open', 'closed', 'pending')),
     
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Create indexes

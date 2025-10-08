@@ -195,19 +195,23 @@
                 <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
                   <td class="py-3 px-2 font-medium">{trade.symbol}</td>
                   <td class="py-3 px-2">
-                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
-                          class:bg-accent/20={trade.direction === 'long'}
-                          class:text-accent={trade.direction === 'long'}
-                          class:bg-danger/20={trade.direction === 'short'}
-                          class:text-danger={trade.direction === 'short'}>
+                    <span
+                      class={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                        trade.direction === 'long'
+                          ? 'bg-accent/20 text-accent'
+                          : 'bg-danger/20 text-danger'
+                      }`}
+                    >
                       {trade.direction.toUpperCase()}
                     </span>
                   </td>
                   <td class="py-3 px-2 text-right">{trade.entry_price.toFixed(5)}</td>
                   <td class="py-3 px-2 text-right">{trade.exit_price?.toFixed(5) || 'N/A'}</td>
-                  <td class="py-3 px-2 text-right font-bold"
-                      class:text-accent={trade.pnl && trade.pnl > 0}
-                      class:text-danger={trade.pnl && trade.pnl < 0}>
+                  <td
+                    class="py-3 px-2 text-right font-bold"
+                    class:text-accent={trade.pnl && trade.pnl > 0}
+                    class:text-danger={trade.pnl && trade.pnl < 0}
+                  >
                     {trade.pnl ? formatCurrency(trade.pnl) : 'N/A'}
                   </td>
                   <td class="py-3 px-2 text-sm text-muted">
