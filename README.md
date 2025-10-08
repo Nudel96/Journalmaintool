@@ -2,14 +2,18 @@
 
 > Professional Trading Journal mit Stripe-Subscriptions, 3D-Animationen und Advanced Analytics
 
-[![Status](https://img.shields.io/badge/Status-In%20Planning-yellow)]()
+[![Status](https://img.shields.io/badge/Status-In%20Development-green)]()
 [![License](https://img.shields.io/badge/License-MIT-blue)]()
+[![Backend](https://img.shields.io/badge/Backend-Rust%20%2B%20Actix--Web-orange)]()
+[![Frontend](https://img.shields.io/badge/Frontend-SvelteKit-red)]()
 
 ---
 
 ## 🎯 Projekt-Übersicht
 
 Ein modernes, professionelles Trading Journal Tool für Trader, die ihre Performance systematisch tracken und verbessern möchten.
+
+**Aktueller Status:** Backend und Frontend funktionsfähig, Authentifizierung implementiert, Dashboard in Entwicklung.
 
 ### Kern-Features
 - ✅ **Benutzer-Authentifizierung** - Sicheres Login/Register-System mit JWT
@@ -51,11 +55,11 @@ Ein modernes, professionelles Trading Journal Tool für Trader, die ihre Perform
 - **Deployment:** Vercel
 
 ### Backend
-- **Framework:** Rust + Axum
-- **Database:** PostgreSQL (Render managed)
-- **ORM:** sqlx
-- **Auth:** JWT (jsonwebtoken)
-- **Deployment:** Render
+- **Framework:** Rust + Actix-Web 4.x ✅
+- **Database:** PostgreSQL 15+ (Docker lokal, Render für Production) ✅
+- **ORM:** sqlx 0.7.x ✅
+- **Auth:** JWT (jsonwebtoken) + Argon2 ✅
+- **Deployment:** Render (geplant)
 
 ### Services
 - **Payments:** Stripe
@@ -136,9 +140,18 @@ Backend läuft auf: http://localhost:3000
 
 ### 4. Datenbank Setup
 ```bash
-docker-compose up -d postgres
+# PostgreSQL in Docker starten
+docker run --name trading-journal-db \
+  -e POSTGRES_PASSWORD=postgres \
+  -p 5433:5432 \
+  -d postgres:15
+
+# Datenbank erstellen
+docker exec trading-journal-db psql -U postgres -c "CREATE DATABASE trading_journal;"
+
+# Migrations ausführen (automatisch beim Backend-Start)
 cd backend
-sqlx migrate run
+cargo run
 ```
 
 ---
@@ -241,33 +254,36 @@ vercel --prod
 
 ## 🗺️ Roadmap
 
-### Phase 1: Setup ✅
+### Phase 1: Setup ✅ ABGESCHLOSSEN
 - [x] Repository-Verbindung
 - [x] Anforderungsanalyse
 - [x] Kompatibilitätsprüfung
 - [x] Projektplanung
+- [x] Projekt-Setup (Frontend + Backend)
+- [x] Docker PostgreSQL Setup
 
-### Phase 2: Backend (In Progress)
-- [ ] Projekt-Setup
-- [ ] Datenbank-Migrations
-- [ ] Authentifizierung
-- [ ] Trade-CRUD
+### Phase 2: Backend ✅ ABGESCHLOSSEN
+- [x] Projekt-Setup (Actix-Web)
+- [x] Datenbank-Migrations (PostgreSQL mit TIMESTAMPTZ)
+- [x] Authentifizierung (JWT + Argon2)
+- [x] Trade-CRUD (Backend-Handlers)
+- [x] Error-Handling & Logging
 
-### Phase 3: Frontend (Geplant)
-- [ ] Layout & UI-Komponenten
-- [ ] Login/Register
-- [ ] Dashboard
-- [ ] Trade-Management
+### Phase 3: Frontend ✅ ABGESCHLOSSEN
+- [x] Layout & UI-Komponenten (Tailwind)
+- [x] Login/Register (mit Svelte Stores)
+- [x] Dashboard (Basis-Implementierung)
+- [x] Trade-Management (in Progress)
 
-### Phase 4: Advanced Features (Geplant)
-- [ ] Stripe-Integration
-- [ ] 3D-Animationen
-- [ ] Analytics & Charts
+### Phase 4: Advanced Features 🔄 IN PROGRESS
+- [ ] Stripe-Integration (nächster Schritt)
+- [ ] 3D-Animationen (geplant)
+- [ ] Analytics & Charts (geplant)
 
-### Phase 5: Deployment (Geplant)
+### Phase 5: Deployment ⏸️ GEPLANT
 - [ ] Testing & QA
-- [ ] Production-Deployment
-- [ ] Monitoring
+- [ ] Production-Deployment (Vercel + Render)
+- [ ] Monitoring (Sentry)
 
 ---
 

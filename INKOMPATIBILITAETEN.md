@@ -1,7 +1,7 @@
 # INKOMPATIBILITÄTEN & KONFLIKTE
 
-**Datum:** 2025-10-07  
-**Status:** KRITISCHE ENTSCHEIDUNGEN ERFORDERLICH
+**Datum:** 2025-10-08
+**Status:** GELÖST - Dokumentation aktualisiert
 
 ---
 
@@ -241,21 +241,83 @@ rebuild.md sagt nur:
 
 ---
 
-## 🎯 NÄCHSTE SCHRITTE
+## � NEU ENTDECKTE PROBLEME (2025-10-08)
 
-1. ✅ **Entscheidungen mit User bestätigen**
-2. ⏭️ Knowledge.md erstellen
-3. ⏭️ Detaillierten Projektplan erstellen
-4. ⏭️ Tech-Stack finalisieren
-5. ⏭️ Implementierung starten
+### 11. TIMESTAMP vs TIMESTAMPTZ in PostgreSQL
+**Problem:**
+- Ursprüngliche Migrationen verwendeten `TIMESTAMP` ohne Zeitzone
+- Rust-Code erwartet `DateTime<Utc>` (entspricht `TIMESTAMPTZ`)
+- Führte zu Typ-Mismatch-Fehlern: "Rust type `DateTime<Utc>` is not compatible with SQL type `TIMESTAMP`"
+
+**Betroffene Tabellen:**
+- `users`: `created_at`, `updated_at`, `last_login`
+- `trades`: `entry_time`, `exit_time`, `created_at`, `updated_at`
+
+**Lösung:** ✅ GELÖST
+```sql
+-- Alle TIMESTAMP zu TIMESTAMPTZ geändert
+created_at TIMESTAMPTZ DEFAULT NOW()
+updated_at TIMESTAMPTZ DEFAULT NOW()
+entry_time TIMESTAMPTZ NOT NULL
+exit_time TIMESTAMPTZ
+last_login TIMESTAMPTZ
+```
+
+**Commit:** `3dd2025` - "Fix: Database timestamp types and Svelte class directive syntax"
 
 ---
 
-## 📞 FRAGEN AN USER
+### 12. Svelte class: Direktiven mit Schrägstrichen
+**Problem:**
+- Svelte erlaubt **keine Schrägstriche (`/`) in CSS-Klassennamen** bei `class:` Direktiven
+- Tailwind-Klassen wie `bg-accent/20` (Opacity-Modifier) funktionieren nicht mit `class:`
+- Führte zu Kompilierungsfehler: "Expected token >"
 
-1. **Datenbank:** PostgreSQL oder SurrealDB (in Docker)?
-2. **TailwindCSS:** v3.4 (stable) oder v4.0-alpha?
-3. **Authentifizierung:** Eigenständig oder PriceActionTalk-Integration?
-4. **Three.js:** Implementieren oder weglassen?
-5. **Stripe-Tiers:** Welche Subscription-Pläne? (Preise, Features?)
+**Beispiel (funktioniert NICHT):**
+```svelte
+<span class:bg-accent/20={condition}>
+```
+
+**Lösung:** ✅ GELÖST
+Template-Literal-Syntax verwenden statt `class:` Direktiven:
+```svelte
+<span class={`inline-flex items-center ${
+  trade.direction === 'long'
+    ? 'bg-accent/20 text-accent'
+    : 'bg-danger/20 text-danger'
+}`}>
+```
+
+**Betroffene Dateien:**
+- `frontend/src/routes/dashboard/+page.svelte`
+
+**Commit:** `3dd2025` - "Fix: Database timestamp types and Svelte class directive syntax"
+
+**Wichtig für zukünftige Entwicklung:**
+- ⚠️ Verwende `class:` nur für Klassen OHNE Schrägstriche
+- ⚠️ Für Tailwind-Opacity-Modifier (`/20`, `/50`, etc.) immer Template-Literals verwenden
+
+---
+
+## �🎯 NÄCHSTE SCHRITTE
+
+1. ✅ **Entscheidungen mit User bestätigt**
+2. ✅ **Knowledge.md erstellt und aktualisiert**
+3. ✅ **Detaillierten Projektplan erstellt**
+4. ✅ **Tech-Stack finalisiert**
+5. ✅ **Implementierung gestartet**
+6. ✅ **Backend & Frontend funktionsfähig**
+7. ⏭️ **Stripe-Integration**
+8. ⏭️ **3D-Animationen**
+9. ⏭️ **Analytics & Charts**
+
+---
+
+## 📞 GELÖSTE FRAGEN
+
+1. ✅ **Datenbank:** PostgreSQL (Render managed)
+2. ✅ **TailwindCSS:** v3.4 (stable)
+3. ✅ **Authentifizierung:** Eigenständig (JWT-basiert)
+4. ⏭️ **Three.js:** Noch zu implementieren
+5. ✅ **Stripe-Tiers:** 1/6/12 Monate ($7/$5/$4)
 

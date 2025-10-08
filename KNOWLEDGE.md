@@ -2,8 +2,8 @@
 
 **Projekt:** PriceActionTalk Trading Journal
 **Repository:** https://github.com/Nudel96/Journalmaintool
-**Letzte Aktualisierung:** 2025-10-07
-**Status:** ✅ BEREIT FÜR IMPLEMENTIERUNG - Alle Entscheidungen bestätigt
+**Letzte Aktualisierung:** 2025-10-08
+**Status:** 🚀 IN ENTWICKLUNG - Backend & Frontend funktionsfähig
 
 ---
 
@@ -26,10 +26,10 @@ Entwicklung eines professionellen Trading Journal Tools mit:
 - Zod 3.x (Validation)
 
 **Backend:**
-- Rust + Axum (latest stable)
-- PostgreSQL (Render managed) ⚠️ NICHT SurrealDB wie in rebuild.md
-- sqlx oder diesel (ORM)
-- JWT Authentication
+- Rust + Actix-Web 4.x (✅ IMPLEMENTIERT)
+- PostgreSQL 15+ (Docker lokal, Render für Production)
+- sqlx 0.7.x (ORM) ✅ IMPLEMENTIERT
+- JWT Authentication (✅ IMPLEMENTIERT)
 
 **Services:**
 - Stripe (Zahlungen)
@@ -96,7 +96,7 @@ Entwicklung eines professionellen Trading Journal Tools mit:
 
 ## 📊 DATENMODELLE (ERWEITERT)
 
-### User Model (PostgreSQL)
+### User Model (PostgreSQL) ✅ IMPLEMENTIERT
 ```sql
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -106,11 +106,12 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     stripe_customer_id VARCHAR(255),
     subscription_status VARCHAR(50) DEFAULT 'none',
-    subscription_tier VARCHAR(50) DEFAULT 'free',
+    subscription_tier VARCHAR(50) DEFAULT 'none',
+    subscription_interval VARCHAR(20),
     permissions TEXT[],
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    last_login TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT NOW(),  -- ⚠️ KORRIGIERT: TIMESTAMPTZ statt TIMESTAMP
+    updated_at TIMESTAMPTZ DEFAULT NOW(),  -- ⚠️ KORRIGIERT: TIMESTAMPTZ statt TIMESTAMP
+    last_login TIMESTAMPTZ                 -- ⚠️ KORRIGIERT: TIMESTAMPTZ statt TIMESTAMP
 );
 ```
 
@@ -119,18 +120,18 @@ CREATE TABLE users (
 
 ---
 
-### Trade Model (PostgreSQL)
+### Trade Model (PostgreSQL) ✅ IMPLEMENTIERT
 ```sql
 CREATE TABLE trades (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     symbol VARCHAR(20) NOT NULL,
-    direction VARCHAR(10) NOT NULL, -- 'long' or 'short'
+    direction VARCHAR(10) NOT NULL CHECK (direction IN ('long', 'short')),
     entry_price DECIMAL(20, 8) NOT NULL,
     exit_price DECIMAL(20, 8),
     quantity DECIMAL(20, 8) NOT NULL,
-    entry_time TIMESTAMP NOT NULL,
-    exit_time TIMESTAMP,
+    entry_time TIMESTAMPTZ NOT NULL,    -- ⚠️ KORRIGIERT: TIMESTAMPTZ statt TIMESTAMP
+    exit_time TIMESTAMPTZ,              -- ⚠️ KORRIGIERT: TIMESTAMPTZ statt TIMESTAMP
     pnl DECIMAL(20, 8),
     pnl_percentage DECIMAL(10, 4),
     fees DECIMAL(20, 8) DEFAULT 0,
@@ -142,14 +143,15 @@ CREATE TABLE trades (
     screenshots TEXT[],
     broker VARCHAR(100),
     account_id VARCHAR(100),
-    status VARCHAR(20) DEFAULT 'open', -- 'open', 'closed', 'pending'
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open', 'closed', 'pending')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),  -- ⚠️ KORRIGIERT: TIMESTAMPTZ statt TIMESTAMP
+    updated_at TIMESTAMPTZ DEFAULT NOW()   -- ⚠️ KORRIGIERT: TIMESTAMPTZ statt TIMESTAMP
 );
 
 CREATE INDEX idx_trades_user_id ON trades(user_id);
 CREATE INDEX idx_trades_entry_time ON trades(entry_time DESC);
 CREATE INDEX idx_trades_symbol ON trades(symbol);
+CREATE INDEX idx_trades_status ON trades(status);
 ```
 
 ---
@@ -349,19 +351,25 @@ trading-journal/
 - ✅ KNOWLEDGE.md erstellt
 - ✅ CORRECTED_REBUILD.md erstellt
 
-### Phase 4: Technologie-Stack Setup (IN PROGRESS)
-- [/] CORRECTED_REBUILD.md erstellen
-- [/] KNOWLEDGE.md aktualisieren
-- [ ] Folder-Struktur erstellen
-- [ ] SvelteKit initialisieren
-- [ ] Rust Backend initialisieren
-- [ ] Docker Compose Setup
-- [ ] PostgreSQL Migrations
+### Phase 4: Technologie-Stack Setup ✅ ABGESCHLOSSEN
+- [x] CORRECTED_REBUILD.md erstellen
+- [x] KNOWLEDGE.md aktualisieren
+- [x] Folder-Struktur erstellen
+- [x] SvelteKit initialisieren
+- [x] Rust Backend initialisieren (Actix-Web)
+- [x] Docker Compose Setup
+- [x] PostgreSQL Migrations (mit TIMESTAMPTZ-Fix)
 
-### Phase 5-7: GEPLANT
-- [ ] Authentifizierung (M4)
+### Phase 5: Authentifizierung ✅ ABGESCHLOSSEN
+- [x] Backend Auth-Handlers (Register, Login)
+- [x] JWT-Token-Generation
+- [x] Password-Hashing (Argon2)
+- [x] Frontend Auth-Store
+- [x] Login/Register Pages
+
+### Phase 6-7: IN PROGRESS
+- [/] Trading-Features (Dashboard implementiert)
 - [ ] Stripe Integration (M5)
-- [ ] Trading-Features (M6)
 - [ ] 3D-Animationen (M7)
 - [ ] Analytics & Charts (M8)
 - [ ] Testing & Deployment (M9-M10)

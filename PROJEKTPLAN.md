@@ -10,12 +10,12 @@
 
 | Meilenstein | Aufwand | Status | Abhängigkeiten |
 |-------------|---------|--------|----------------|
-| **M1: Projekt-Setup** | 8h | ⏭️ BEREIT | Keine |
-| **M2: Backend-Grundlagen** | 20h | ⏸️ WARTET | M1 |
-| **M3: Frontend-Grundlagen** | 16h | ⏸️ WARTET | M1 |
-| **M4: Authentifizierung** | 12h | ⏸️ WARTET | M2, M3 |
-| **M5: Stripe-Integration** | 16h | ⏸️ WARTET | M4 |
-| **M6: Trading-Features** | 24h | ⏸️ WARTET | M4 |
+| **M1: Projekt-Setup** | 8h | ✅ ABGESCHLOSSEN | Keine |
+| **M2: Backend-Grundlagen** | 20h | ✅ ABGESCHLOSSEN | M1 |
+| **M3: Frontend-Grundlagen** | 16h | ✅ ABGESCHLOSSEN | M1 |
+| **M4: Authentifizierung** | 12h | ✅ ABGESCHLOSSEN | M2, M3 |
+| **M5: Stripe-Integration** | 16h | ⏭️ BEREIT | M4 |
+| **M6: Trading-Features** | 24h | 🔄 IN PROGRESS | M4 |
 | **M7: 3D-Animationen** | 22h | ⏸️ WARTET | M3 |
 | **M8: Analytics & Charts** | 18h | ⏸️ WARTET | M6 |
 | **M9: Testing & QA** | 12h | ⏸️ WARTET | M8 |
@@ -85,12 +85,12 @@ Projekt-Struktur erstellen, Dependencies installieren, lokale Entwicklungsumgebu
    - Initial Commit
    - Branch-Strategie definieren
 
-### Deliverables
+### Deliverables ✅ ALLE ABGESCHLOSSEN
 - ✅ Funktionierende Projekt-Struktur
-- ✅ Frontend startet (`npm run dev`)
-- ✅ Backend kompiliert (`cargo build`)
-- ✅ PostgreSQL läuft (Docker)
-- ✅ Git Repository initialisiert
+- ✅ Frontend startet (`npm run dev`) - Port 5173
+- ✅ Backend kompiliert und läuft (`cargo run`) - Port 3000
+- ✅ PostgreSQL läuft (Docker) - Port 5433
+- ✅ Git Repository initialisiert und gepusht
 
 ---
 
@@ -143,12 +143,12 @@ Basis-Backend mit Datenbank, Error-Handling, Logging
    - Unit-Tests für Models
    - Integration-Tests Setup
 
-### Deliverables
-- ✅ Backend startet ohne Fehler
-- ✅ Datenbank-Verbindung funktioniert
-- ✅ Migrations laufen
+### Deliverables ✅ ALLE ABGESCHLOSSEN
+- ✅ Backend startet ohne Fehler (Actix-Web)
+- ✅ Datenbank-Verbindung funktioniert (PostgreSQL via sqlx)
+- ✅ Migrations laufen (mit TIMESTAMPTZ-Fix)
 - ✅ Health-Check antwortet
-- ✅ Logging funktioniert
+- ✅ Logging funktioniert (tracing)
 
 ---
 
@@ -187,11 +187,11 @@ Basis-Frontend mit Layout, Routing, UI-Komponenten
    - Error-Handling
    - JWT-Token-Management
 
-### Deliverables
-- ✅ Frontend zeigt Layout
+### Deliverables ✅ ALLE ABGESCHLOSSEN
+- ✅ Frontend zeigt Layout (Dark Theme)
 - ✅ Navigation funktioniert
-- ✅ UI-Komponenten verwendbar
-- ✅ API-Client bereit
+- ✅ UI-Komponenten verwendbar (Tailwind)
+- ✅ API-Client bereit (fetch-wrapper)
 
 ---
 
@@ -229,12 +229,12 @@ Vollständiges Auth-System (Register, Login, JWT)
    - Password-Strength-Meter
    - Terms-Checkbox
 
-### Deliverables
-- ✅ User kann registrieren
-- ✅ User kann einloggen
-- ✅ JWT-Token funktioniert
-- ✅ Protected-Routes funktionieren
-- ✅ Logout funktioniert
+### Deliverables ✅ ALLE ABGESCHLOSSEN
+- ✅ User kann registrieren (POST /auth/register)
+- ✅ User kann einloggen (POST /auth/login)
+- ✅ JWT-Token funktioniert (Argon2 Password-Hashing)
+- ✅ Protected-Routes funktionieren (Auth-Middleware)
+- ✅ Logout funktioniert (Token-Invalidierung)
 
 ---
 
@@ -332,12 +332,12 @@ Kern-Trading-Journal-Features
    - Recent-Trades
    - Quick-Actions
 
-### Deliverables
-- ✅ User kann Trades erstellen
-- ✅ User kann Trades bearbeiten
-- ✅ User kann Trades löschen
-- ✅ Trade-Liste funktioniert
-- ✅ Dashboard zeigt Statistiken
+### Deliverables 🔄 TEILWEISE ABGESCHLOSSEN
+- [/] User kann Trades erstellen (Backend bereit)
+- [/] User kann Trades bearbeiten (Backend bereit)
+- [/] User kann Trades löschen (Backend bereit)
+- [/] Trade-Liste funktioniert (Dashboard zeigt Trades)
+- [/] Dashboard zeigt Statistiken (Basis-Implementierung)
 
 ---
 
@@ -499,17 +499,28 @@ Production-Deployment auf Vercel + Render
 
 ## 🚀 NÄCHSTE SCHRITTE
 
-1. ✅ **Entscheidungen bestätigen** (mit User)
-2. ⏭️ **M1 starten:** Projekt-Setup
-3. ⏭️ **README.md erstellen**
-4. ⏭️ **Implementierung beginnen**
+1. ✅ **Entscheidungen bestätigt** (mit User)
+2. ✅ **M1-M4 abgeschlossen:** Projekt-Setup, Backend, Frontend, Auth
+3. ✅ **README.md erstellt**
+4. ✅ **Implementierung begonnen**
+5. 🔄 **M6 in Progress:** Trading-Features
+6. ⏭️ **M5 nächster:** Stripe-Integration
+7. ⏭️ **M7 danach:** 3D-Animationen
 
 ---
 
-## 📞 OFFENE FRAGEN VOR START
+## 📞 GELÖSTE FRAGEN
 
-1. **Stripe-Tiers:** Preise bestätigen? (Vorschlag: Free/$0, Pro/$19, Lifetime/$299)
-2. **TailwindCSS:** v3.4 oder v4-alpha?
-3. **Deployment-Zeitpunkt:** Sofort oder nach M9?
-4. **Feature-Priorität:** Welche Features sind am wichtigsten?
+1. ✅ **Stripe-Tiers:** 1/6/12 Monate ($7/$5/$4) - BESTÄTIGT
+2. ✅ **TailwindCSS:** v3.4 (stable) - IMPLEMENTIERT
+3. ✅ **Deployment-Zeitpunkt:** Nach M9 (Testing & QA)
+4. ✅ **Feature-Priorität:** Auth → Trading → Stripe → 3D → Analytics
+
+## 🐛 BEKANNTE PROBLEME & LÖSUNGEN
+
+### Problem 1: TIMESTAMP vs TIMESTAMPTZ
+**Gelöst:** Alle Migrationen auf `TIMESTAMPTZ` aktualisiert (Commit `3dd2025`)
+
+### Problem 2: Svelte class: mit Schrägstrichen
+**Gelöst:** Template-Literals statt `class:` für Tailwind-Opacity-Modifier (Commit `3dd2025`)
 
