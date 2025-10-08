@@ -28,21 +28,21 @@ $registerData = @{
 } | ConvertTo-Json
 
 try {
-    $response = Invoke-RestMethod -Uri "$API_URL/auth/register" -Method Post -Body $registerData -ContentType "application/json"
+    $response = Invoke-RestMethod -Uri "$API_URL/api/auth/register" -Method Post -Body $registerData -ContentType "application/json"
     $TOKEN = $response.token
     Write-Host "✓ User Registered: $($response.user.name) ($($response.user.email))" -ForegroundColor Green
     Write-Host "  Token: $($TOKEN.Substring(0, 20))..." -ForegroundColor Gray
 } catch {
     # User might already exist, try login
     Write-Host "  User exists, trying login..." -ForegroundColor Yellow
-    
+
     $loginData = @{
         email = "trader@test.com"
         password = "testpassword123"
     } | ConvertTo-Json
-    
+
     try {
-        $response = Invoke-RestMethod -Uri "$API_URL/auth/login" -Method Post -Body $loginData -ContentType "application/json"
+        $response = Invoke-RestMethod -Uri "$API_URL/api/auth/login" -Method Post -Body $loginData -ContentType "application/json"
         $TOKEN = $response.token
         Write-Host "✓ User Logged In: $($response.user.name)" -ForegroundColor Green
     } catch {
@@ -60,7 +60,7 @@ $headers = @{
 }
 
 try {
-    $response = Invoke-RestMethod -Uri "$API_URL/auth/me" -Method Get -Headers $headers
+    $response = Invoke-RestMethod -Uri "$API_URL/api/auth/me" -Method Get -Headers $headers
     Write-Host "✓ Current User: $($response.name) ($($response.email))" -ForegroundColor Green
     Write-Host "  Subscription: $($response.subscription_tier) - $($response.subscription_status)" -ForegroundColor Gray
 } catch {
@@ -89,7 +89,7 @@ $tradeData = @{
 } | ConvertTo-Json
 
 try {
-    $response = Invoke-RestMethod -Uri "$API_URL/trades" -Method Post -Body $tradeData -ContentType "application/json" -Headers $headers
+    $response = Invoke-RestMethod -Uri "$API_URL/api/trades" -Method Post -Body $tradeData -ContentType "application/json" -Headers $headers
     $TRADE_ID = $response.id
     Write-Host "✓ Trade Created: $($response.symbol) $($response.direction)" -ForegroundColor Green
     Write-Host "  P&L: $$($response.pnl) ($($response.pnl_percentage)%)" -ForegroundColor Gray
@@ -121,7 +121,7 @@ $tradeData2 = @{
 } | ConvertTo-Json
 
 try {
-    $response = Invoke-RestMethod -Uri "$API_URL/trades" -Method Post -Body $tradeData2 -ContentType "application/json" -Headers $headers
+    $response = Invoke-RestMethod -Uri "$API_URL/api/trades" -Method Post -Body $tradeData2 -ContentType "application/json" -Headers $headers
     Write-Host "✓ Trade Created: $($response.symbol) $($response.direction)" -ForegroundColor Green
     Write-Host "  P&L: $$($response.pnl) ($($response.pnl_percentage)%)" -ForegroundColor Gray
 } catch {
@@ -133,7 +133,7 @@ Write-Host ""
 # 6. List All Trades
 Write-Host "6. Testing List Trades..." -ForegroundColor Yellow
 try {
-    $response = Invoke-RestMethod -Uri "$API_URL/trades" -Method Get -Headers $headers
+    $response = Invoke-RestMethod -Uri "$API_URL/api/trades" -Method Get -Headers $headers
     Write-Host "✓ Found $($response.Count) trades" -ForegroundColor Green
     foreach ($trade in $response) {
         $pnlColor = if ($trade.pnl -gt 0) { "Green" } else { "Red" }
@@ -148,7 +148,7 @@ Write-Host ""
 # 7. Get Single Trade
 Write-Host "7. Testing Get Single Trade..." -ForegroundColor Yellow
 try {
-    $response = Invoke-RestMethod -Uri "$API_URL/trades/$TRADE_ID" -Method Get -Headers $headers
+    $response = Invoke-RestMethod -Uri "$API_URL/api/trades/$TRADE_ID" -Method Get -Headers $headers
     Write-Host "✓ Trade Details:" -ForegroundColor Green
     Write-Host "  Symbol: $($response.symbol)" -ForegroundColor Gray
     Write-Host "  Direction: $($response.direction)" -ForegroundColor Gray
@@ -164,7 +164,7 @@ Write-Host ""
 # 8. Filter Trades
 Write-Host "8. Testing Trade Filters..." -ForegroundColor Yellow
 try {
-    $response = Invoke-RestMethod -Uri "$API_URL/trades?symbol=EURUSD" -Method Get -Headers $headers
+    $response = Invoke-RestMethod -Uri "$API_URL/api/trades?symbol=EURUSD" -Method Get -Headers $headers
     Write-Host "✓ Filtered by EURUSD: $($response.Count) trades" -ForegroundColor Green
 } catch {
     Write-Host "✗ Filter Trades Failed: $_" -ForegroundColor Red
