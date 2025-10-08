@@ -292,6 +292,11 @@
         <div class="chip">👥 Community insights</div>
       </div>
 
+      <!-- Logo -->
+      <div class="logo-container">
+        <img src="/SVGS/Final logo frontpage.svg" alt="Price Action Talk Logo" class="main-logo" />
+      </div>
+
       <div class="ticker" aria-hidden="true">
         <div class="line">
           <span class="badge"><span class="b"></span>EURUSD +0.42%</span>
@@ -533,9 +538,33 @@
     color: #ebf4ff;
   }
 
+  .logo-container {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .main-logo {
+    width: 280px;
+    height: auto;
+    opacity: 0.85;
+    filter: drop-shadow(0 0 20px rgba(124, 252, 0, 0.3));
+    transition: all 0.3s ease;
+  }
+
+  .main-logo:hover {
+    opacity: 1;
+    filter: drop-shadow(0 0 30px rgba(124, 252, 0, 0.5));
+  }
+
   @media (max-width: 980px) {
     .features {
       grid-template-columns: 1fr 1fr;
+    }
+
+    .main-logo {
+      width: 220px;
     }
   }
 
