@@ -551,6 +551,8 @@
     height: auto;
     opacity: 0.9;
     transition: all 0.3s ease;
+    /* Verschiebe das Logo nach rechts, um die Asymmetrie im SVG auszugleichen */
+    margin-left: 20px;
   }
 
   .main-logo:hover {
