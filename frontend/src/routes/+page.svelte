@@ -294,7 +294,7 @@
 
       <!-- Logo -->
       <div class="logo-container">
-        <img src="/SVGS/Final logo frontpage.svg" alt="Price Action Talk Logo" class="main-logo" />
+        <img src="/Logolanding.svg" alt="Price Action Talk Logo" class="main-logo" />
       </div>
 
       <div class="ticker" aria-hidden="true">
@@ -539,23 +539,23 @@
   }
 
   .logo-container {
-    margin-top: 32px;
+    margin-top: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px 0;
   }
 
   .main-logo {
-    width: 280px;
+    width: 200px;
     height: auto;
-    opacity: 0.85;
-    filter: drop-shadow(0 0 20px rgba(124, 252, 0, 0.3));
+    opacity: 0.9;
     transition: all 0.3s ease;
   }
 
   .main-logo:hover {
     opacity: 1;
-    filter: drop-shadow(0 0 30px rgba(124, 252, 0, 0.5));
+    transform: scale(1.05);
   }
 
   @media (max-width: 980px) {
@@ -564,7 +564,7 @@
     }
 
     .main-logo {
-      width: 220px;
+      width: 160px;
     }
   }
 
